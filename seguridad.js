@@ -1,5 +1,5 @@
 
-const API_AUTH = "https://script.google.com/macros/s/AKfycbzE8qEqegDEndfMmKUVKr3jqvb_ND7BtHy6aeyExqUcyV_L8G25FYa1XbXjcQofG2Hd/exec";
+const API_AUTH = "https://script.google.com/macros/s/AKfycbyPns15OgDKUCyfnsKGzE-DHePh5-IKEE_bbDHQUVtHcs2Wfj8e_VyrCcVLSoc4F6vM/exec";
 
 async function checkAuth(){
   const token = localStorage.getItem("token");
