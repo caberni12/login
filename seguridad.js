@@ -1,5 +1,5 @@
 
-const API_AUTH = "PEGA_AQUI_TU_URL_APPS_SCRIPT";
+const API_AUTH = "https://script.google.com/macros/s/AKfycbzE8qEqegDEndfMmKUVKr3jqvb_ND7BtHy6aeyExqUcyV_L8G25FYa1XbXjcQofG2Hd/exec";
 
 async function checkAuth(){
   const token = localStorage.getItem("token");
