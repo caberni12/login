@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Acceso de Usuario</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:Arial;
+  background:#f1f5f9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  margin:0;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:16px;
+  width:320px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+
+h3{
+  margin-top:0;
+  text-align:center;
+}
+
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+input:focus{
+  outline:none;
+  border-color:#0ea5e9;
+}
+
+button{
+  background:#0ea5e9;
+  color:#fff;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.msg{
+  margin-top:10px;
+  font-size:13px;
+  text-align:center;
+  color:#ef4444;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h3>Acceso de Usuario</h3>
+
+  <input id="user" placeholder="Usuario">
+  <input id="pass" type="password" placeholder="Contraseña">
+
+  <button onclick="login()">Ingresar</button>
+
+  <div id="mensaje" class="msg"></div>
+</div>
+
+<script>
+
+// ===============================
+// PEGA AQUÍ TU URL DE APPS SCRIPT
+// ===============================
+const API = "https://script.google.com/macros/s/AKfycbxpOpAbRoqi_vn9_q3aMlJLX1AKteiFSOehbQ4Mz986Jw6TtfYHuBpH7wZ4E4qSEHxV/exec";
+
+// ===============================
+async function login(){
+
+const username = document.getElementById("user").value.trim();
+const password = document.getElementById("pass").value.trim();
+const mensaje  = document.getElementById("mensaje");
+
+mensaje.innerHTML = "";
+
+if(!username || !password){
+  mensaje.innerHTML = "Debe ingresar usuario y contraseña";
+  return;
+}
+
+try{
+
+  const response = await fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=UTF-8"
+    },
+    body: JSON.stringify({
+      action: "login",
+      username: username,
+      password: password
+    })
+  });
+
+  const text = await response.text();
+
+  if(!text){
+    mensaje.innerHTML = "No hubo respuesta del servidor";
+    return;
+  }
+
+  const data = JSON.parse(text);
+
+  if(data.ok){
+    localStorage.setItem("token", data.token);
+    window.location.href = "panel.html";
+  }else{
+    mensaje.innerHTML = data.msg;
+  }
+
+}catch(error){
+  mensaje.innerHTML = "Error de conexión (CORS o publicación)";
+  console.log(error);
+}
+}
+
+</script>
+
+</body>
+</html>

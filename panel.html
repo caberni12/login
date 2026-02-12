@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel de Administración</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:Arial;
+  background:#f1f5f9;
+  margin:0;
+  padding:20px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  max-width:900px;
+  margin:auto;
+}
+
+h2{margin-top:0}
+
+input,select,button{
+  padding:10px;
+  margin:6px 0;
+  border-radius:6px;
+  border:1px solid #ddd;
+}
+
+button{
+  background:#0ea5e9;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+
+button.danger{
+  background:#ef4444;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th,td{
+  padding:8px;
+  border:1px solid #ddd;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Administración de Usuarios</h2>
+
+  <div id="usuarioInfo"></div>
+
+  <h3>Crear / Editar Usuario</h3>
+
+  <input id="username" placeholder="Usuario">
+  <input id="password" placeholder="Contraseña">
+  <input id="nombre" placeholder="Nombre">
+  
+  <select id="rol">
+    <option value="ADMIN">ADMIN</option>
+    <option value="OPERADOR">OPERADOR</option>
+    <option value="SUPERVISOR">SUPERVISOR</option>
+  </select>
+
+  <select id="activo">
+    <option value="SI">ACTIVO</option>
+    <option value="NO">INACTIVO</option>
+  </select>
+
+  <br>
+  <button onclick="crearUsuario()">Crear Usuario</button>
+  <button onclick="editarUsuario()">Actualizar Usuario</button>
+
+  <h3>Lista de Usuarios</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th>Activo</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="tablaUsuarios"></tbody>
+  </table>
+
+  <br>
+  <button onclick="logout()" class="danger">Cerrar Sesión</button>
+</div>
+
+<script>
+
+const API = "PEGA_AQUI_TU_URL_APPS_SCRIPT";
+
+// =========================================
+// VERIFICAR SESIÓN
+// =========================================
+async function verificarSesion(){
+
+  const token = localStorage.getItem("token");
+  if(!token){
+    location.href="login.html";
+    return;
+  }
+
+  const r = await fetch(API+"?action=verify&token="+token);
+  const data = await r.json();
+
+  if(!data.valid){
+    localStorage.clear();
+    location.href="login.html";
+    return;
+  }
+
+  document.getElementById("usuarioInfo").innerHTML =
+    "Conectado como: <b>"+data.nombre+"</b> ("+data.rol+")";
+
+  if(data.rol !== "ADMIN"){
+    alert("No tienes permisos para esta sección");
+    location.href="login.html";
+  }
+
+  listarUsuarios();
+}
+
+// =========================================
+// CREAR
+// =========================================
+async function crearUsuario(){
+
+  await fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"text/plain;charset=UTF-8" },
+    body:JSON.stringify({
+      action:"crearUsuario",
+      username:username.value,
+      password:password.value,
+      nombre:nombre.value,
+      rol:rol.value
+    })
+  });
+
+  listarUsuarios();
+}
+
+// =========================================
+// EDITAR
+// =========================================
+async function editarUsuario(){
+
+  await fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"text/plain;charset=UTF-8" },
+    body:JSON.stringify({
+      action:"editarUsuario",
+      username:username.value,
+      password:password.value,
+      nombre:nombre.value,
+      rol:rol.value,
+      activo:activo.value
+    })
+  });
+
+  listarUsuarios();
+}
+
+// =========================================
+// ELIMINAR
+// =========================================
+async function eliminarUsuario(user){
+
+  await fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"text/plain;charset=UTF-8" },
+    body:JSON.stringify({
+      action:"eliminarUsuario",
+      username:user
+    })
+  });
+
+  listarUsuarios();
+}
+
+// =========================================
+// LISTAR
+// =========================================
+async function listarUsuarios(){
+
+  const r = await fetch(API+"?action=listarUsuarios");
+  const data = await r.json();
+
+  const tabla = document.getElementById("tablaUsuarios");
+  tabla.innerHTML="";
+
+  data.data.forEach(u => {
+
+    tabla.innerHTML += `
+      <tr>
+        <td>${u[0]}</td>
+        <td>${u[1]}</td>
+        <td>${u[3]}</td>
+        <td>${u[4]}</td>
+        <td>${u[5]}</td>
+        <td>
+          <button onclick="eliminarUsuario('${u[1]}')" class="danger">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// =========================================
+// LOGOUT
+// =========================================
+function logout(){
+  localStorage.clear();
+  location.href="login.html";
+}
+
+verificarSesion();
+
+</script>
+</body>
+</html>
