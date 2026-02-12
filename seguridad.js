@@ -1,10 +1,10 @@
 
-const API_AUTH = "https://script.google.com/macros/s/AKfycbyPns15OgDKUCyfnsKGzE-DHePh5-IKEE_bbDHQUVtHcs2Wfj8e_VyrCcVLSoc4F6vM/exec";
+const API_AUTH = "https://script.google.com/macros/s/AKfycbz_xj7XCKqPsZEBv4is02nZQFz4b8TNra4sHTP8m_GnbdYrgUVCwP3OzGEuPZjt3Nxy/exec";
 
 async function checkAuth(){
   const token = localStorage.getItem("token");
   if(!token){
-    location.href="login.html";
+    location.href="index.html";
     return;
   }
 
