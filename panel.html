@@ -106,7 +106,7 @@ th,td{
 
 <script>
 
-const API = "PEGA_AQUI_TU_URL_APPS_SCRIPT";
+const API = "https://script.google.com/macros/s/AKfycbwTCUPREO3Mtbz16yGRmSexCONAdCFKY98K0T5IsulRyItp5Zri1uQVCKSmfmPRfBL3/exec";
 
 // =========================================
 // VERIFICAR SESIÓN
@@ -115,7 +115,7 @@ async function verificarSesion(){
 
   const token = localStorage.getItem("token");
   if(!token){
-    location.href="login.html";
+    location.href="index.html";
     return;
   }
 
@@ -124,7 +124,7 @@ async function verificarSesion(){
 
   if(!data.valid){
     localStorage.clear();
-    location.href="login.html";
+    location.href="index.html";
     return;
   }
 
@@ -133,7 +133,7 @@ async function verificarSesion(){
 
   if(data.rol !== "ADMIN"){
     alert("No tienes permisos para esta sección");
-    location.href="login.html";
+    location.href="index.html";
   }
 
   listarUsuarios();
@@ -230,7 +230,7 @@ async function listarUsuarios(){
 // =========================================
 function logout(){
   localStorage.clear();
-  location.href="login.html";
+  location.href="index.html";
 }
 
 verificarSesion();
